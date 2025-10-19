@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>وقاص بلال - دعوت نامہ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Nastaliq Urdu', 'Amiri', serif;
+      background: #1a0a0a;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      direction: rtl;
+    }
+
+    /* Ornate patterned background */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(139, 0, 0, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l5 15h16l-13 9 5 15-13-9-13 9 5-15-13-9h16z' fill='%23d4af37' opacity='0.03'/%3E%3C/svg%3E");
+      animation: backgroundFloat 60s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes backgroundFloat {
+      0% { background-position: 0 0; }
+      100% { background-position: 1000px 1000px; }
+    }
+
+    /* Book stage */
+    .book-stage {
+      perspective: 2000px;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+    }
+
+    .book {
+      position: relative;
+      width: min(900px, 90vw);
+      height: min(650px, 80vh);
+      transform-style: preserve-3d;
+      filter: drop-shadow(0 20px 60px rgba(0, 0, 0, 0.8));
+      margin: 0 auto;
+    }
+
+    /* Individual page */
+    .page {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transform-origin: left center;
+      transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+      cursor: pointer;
+      left: 0;
+      top: 0;
+    }
+
+    .page.flipped {
+      transform: rotateY(-180deg);
+    }
+
+    /* Page surface */
+    .page-surface {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      background: 
+        linear-gradient(135deg, #fff9f5 0%, #fef5eb 50%, #fff9f5 100%);
+      border: 6px solid;
+      border-image: linear-gradient(135deg, #8b0000, #d4af37, #8b0000) 1;
+      padding: clamp(1.5rem, 4vw, 3rem);
+      overflow-y: auto;
+      box-shadow: 
+        inset 0 0 100px rgba(212, 175, 55, 0.2),
+        inset 0 0 50px rgba(139, 0, 0, 0.1);
+    }
+
+    .page-front {
+      transform: rotateY(0deg);
+    }
+
+    .page-back {
+      transform: rotateY(180deg);
+      opacity: 0;
+    }
+
+    /* Ornate border frame */
+    .ornate-border {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      right: 15px;
+      bottom: 15px;
+      border: 3px double rgba(139, 0, 0, 0.4);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .ornate-border::before,
+    .ornate-border::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 2px solid rgba(212, 175, 55, 0.3);
+      top: -10px;
+      left: -10px;
+    }
+
+    .ornate-border::after {
+      top: 10px;
+      left: 10px;
+    }
+
+    /* Corner decorations */
+    .corner-flower {
+      position: absolute;
+      width: clamp(80px, 12vw, 120px);
+      height: clamp(80px, 12vw, 120px);
+      pointer-events: none;
+      z-index: 15;
+      opacity: 0.8;
+    }
+
+    .corner-flower svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .corner-flower.top-left { top: 10px; left: 10px; }
+    .corner-flower.top-right { top: 10px; right: 10px; transform: scaleX(-1); }
+    .corner-flower.bottom-left { bottom: 10px; left: 10px; transform: scaleY(-1); }
+    .corner-flower.bottom-right { bottom: 10px; right: 10px; transform: scale(-1); }
+
+    /* Content wrapper */
+    .content-wrapper {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100%;
+      padding: clamp(1rem, 3vw, 2rem);
+    }
+
+    /* Decorative dividers */
+    .royal-divider {
+      width: 80%;
+      height: 40px;
+      margin: clamp(1rem, 2.5vw, 2rem) auto;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40'%3E%3Cpath d='M0 20 Q50 10, 100 20 T200 20' stroke='%23d4af37' stroke-width='2' fill='none'/%3E%3Ccircle cx='100' cy='20' r='8' fill='%238b0000'/%3E%3Ccircle cx='100' cy='20' r='5' fill='%23d4af37'/%3E%3Cpath d='M50 20 l-5-8 l5-2 l5 2 z' fill='%23d4af37'/%3E%3Cpath d='M150 20 l-5-8 l5-2 l5 2 z' fill='%23d4af37'/%3E%3C/svg%3E") center/contain no-repeat;
+    }
+
+    /* Typography */
+    .bismillah {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      color: #8b0000;
+      text-align: center;
+      margin-bottom: clamp(1rem, 2.5vw, 2rem);
+      text-shadow: 
+        0 2px 4px rgba(139, 0, 0, 0.3),
+        0 0 30px rgba(212, 175, 55, 0.2);
+      font-weight: 700;
+      line-height: 1.8;
+      padding: clamp(0.8rem, 2vw, 1.5rem);
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), transparent);
+      border-radius: 10px;
+    }
+
+    .groom-name-highlight {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      color: #8b0000;
+      text-align: center;
+      font-weight: 700;
+      margin: clamp(1.5rem, 3vw, 2.5rem) 0;
+      padding: clamp(1rem, 2.5vw, 2rem);
+      background: linear-gradient(135deg, rgba(139, 0, 0, 0.05), rgba(212, 175, 55, 0.05));
+      border-top: 3px double #d4af37;
+      border-bottom: 3px double #d4af37;
+      text-shadow: 
+        0 3px 6px rgba(139, 0, 0, 0.4),
+        0 0 40px rgba(212, 175, 55, 0.3);
+      letter-spacing: 2px;
+      position: relative;
+      animation: nameGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes nameGlow {
+      0%, 100% { text-shadow: 0 3px 6px rgba(139, 0, 0, 0.4), 0 0 40px rgba(212, 175, 55, 0.3); }
+      50% { text-shadow: 0 3px 6px rgba(139, 0, 0, 0.6), 0 0 60px rgba(212, 175, 55, 0.5); }
+    }
+
+    .page-title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      color: #8b0000;
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: clamp(1rem, 2vw, 1.5rem);
+      text-shadow: 0 2px 5px rgba(139, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .intro-text {
+      font-size: clamp(1.3rem, 2.8vw, 1.8rem);
+      color: #2d1810;
+      text-align: center;
+      line-height: 2.2;
+      margin: clamp(0.5rem, 1.5vw, 1rem) 0;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .blessing-text {
+      font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+      color: #654321;
+      text-align: center;
+      line-height: 2.3;
+      padding: clamp(1.5rem, 3vw, 2.5rem);
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(139, 0, 0, 0.05));
+      border: 2px solid rgba(139, 0, 0, 0.2);
+      border-radius: 15px;
+      margin: clamp(1rem, 2vw, 1.5rem) 0;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      white-space: pre-line;
+    }
+
+    /* Event card styling */
+    .event-card {
+      width: 100%;
+      background: linear-gradient(135deg, rgba(139, 0, 0, 0.08), rgba(212, 175, 55, 0.08));
+      border: 3px solid rgba(139, 0, 0, 0.3);
+      border-radius: 15px;
+      padding: clamp(1.5rem, 3vw, 2.5rem);
+      margin: clamp(1rem, 2vw, 1.5rem) 0;
+      box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.15),
+        inset 0 2px 10px rgba(212, 175, 55, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .event-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+      animation: shimmer 4s linear infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .event-date {
+      font-size: clamp(1.2rem, 2.3vw, 1.6rem);
+      color: #8b0000;
+      font-weight: 600;
+      margin-bottom: clamp(0.5rem, 1vw, 0.8rem);
+      text-align: center;
+    }
+
+    .event-name {
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      color: #2d1810;
+      font-weight: 700;
+      text-align: center;
+      margin: clamp(0.8rem, 1.5vw, 1.2rem) 0;
+    }
+
+    .event-time {
+      font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+      color: #654321;
+      text-align: center;
+    }
+
+    .event-location {
+      font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+      color: #8b4513;
+      text-align: center;
+      margin-top: clamp(0.8rem, 1.5vw, 1.2rem);
+      line-height: 1.8;
+    }
+
+    /* Navigation arrows */
+    .nav-arrow {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      width: clamp(55px, 9vw, 75px);
+      height: clamp(55px, 9vw, 75px);
+      background: linear-gradient(135deg, #d4af37, #ffd700);
+      border: 3px solid #8b0000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1000;
+      font-size: clamp(1.5rem, 3.5vw, 2rem);
+      color: #8b0000;
+      box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        inset 0 2px 5px rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      user-select: none;
+    }
+
+    .nav-arrow:hover:not(.disabled) {
+      transform: translateY(-50%) scale(1.15);
+      box-shadow: 
+        0 15px 40px rgba(212, 175, 55, 0.6),
+        inset 0 2px 5px rgba(255, 255, 255, 0.5);
+    }
+
+    .nav-arrow:active:not(.disabled) {
+      transform: translateY(-50%) scale(0.95);
+    }
+
+    .nav-arrow.disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .arrow-prev { right: clamp(1rem, 3vw, 2rem); }
+    .arrow-next { left: clamp(1rem, 3vw, 2rem); }
+
+    /* Page indicators */
+    .page-dots {
+      position: fixed;
+      bottom: clamp(1.5rem, 3vw, 2.5rem);
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+      z-index: 1000;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(212, 175, 55, 0.3);
+      border: 2px solid rgba(139, 0, 0, 0.4);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .dot.active {
+      width: 16px;
+      height: 16px;
+      background: linear-gradient(135deg, #d4af37, #ffd700);
+      border-color: #8b0000;
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.8);
+    }
+
+    .dot:hover {
+      transform: scale(1.3);
+      background: rgba(212, 175, 55, 0.6);
+    }
+
+    /* WhatsApp share button */
+    .whatsapp-btn {
+      position: fixed;
+      bottom: clamp(1.5rem, 3vw, 2.5rem);
+      right: clamp(1rem, 3vw, 2rem);
+      width: clamp(55px, 9vw, 70px);
+      height: clamp(55px, 9vw, 70px);
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .whatsapp-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 35px rgba(37, 211, 102, 0.6);
+    }
+
+    .whatsapp-btn svg {
+      width: 60%;
+      height: 60%;
+      fill: white;
+    }
+
+    /* Auto-flip progress bar */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(to right, #8b0000, #d4af37, #8b0000);
+      z-index: 1001;
+      transition: width 0.1s linear;
+      box-shadow: 0 2px 10px rgba(212, 175, 55, 0.5);
+    }
+
+    /* Mobile optimizations */
+    @media (max-width: 768px) {
+      body {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+      }
+
+      .book-stage {
+        overflow: hidden;
+        position: fixed;
+      }
+
+      .book {
+        width: 95vw;
+        height: 85vh;
+        max-width: 95vw;
+        margin: 0 auto;
+        left: 0;
+        right: 0;
+      }
+
+      .page {
+        transform-origin: left center;
+      }
+
+      .page-surface {
+        padding: 1.5rem 1rem;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .corner-flower {
+        width: 60px;
+        height: 60px;
+      }
+
+      .nav-arrow {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+      }
+
+      .arrow-prev { right: 0.5rem; }
+      .arrow-next { left: 0.5rem; }
+
+      .whatsapp-btn {
+        width: 50px;
+        height: 50px;
+        bottom: 1rem;
+        right: 0.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        overflow: hidden;
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+      }
+
+      .book-stage {
+        overflow: hidden;
+      }
+
+      .book {
+        width: 96vw;
+        height: 88vh;
+      }
+
+      .ornate-border {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+      }
+
+      .royal-divider {
+        height: 30px;
+        width: 90%;
+      }
+
+      .page-surface {
+        padding: 1rem 0.8rem;
+      }
+    }
+
+    /* Loading animation */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .book {
+      animation: fadeInUp 0.8s ease-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="book-stage">
+    <div class="book" id="book">
+      <!-- Page 1: Welcome & Bismillah -->
+      <div class="page" data-page="0">
+        <div class="page-surface page-front">
+          <div class="ornate-border"></div>
+          <div class="corner-flower top-left">
+            <svg viewBox="0 0 100 100"><path d="M50 10 Q30 30 10 50 Q30 70 50 90 Q70 70 90 50 Q70 30 50 10z" fill="#8b0000" opacity="0.3"/><circle cx="50" cy="50" r="20" fill="#d4af37" opacity="0.6"/><circle cx="50" cy="50" r="10" fill="#8b0000"/></svg>
+          </div>
+          <div class="corner-flower top-right">
+            <svg viewBox="0 0 100 100"><path d="M50 10 Q30 30 10 50 Q30 70 50 90 Q70 70 90 50 Q70 30 50 10z" fill="#8b0000" opacity="0.3"/><circle cx="50" cy="50" r="20" fill="#d4af37" opacity="0.6"/><circle cx="50" cy="50" r="10" fill="#8b0000"/></svg>
+          </div>
+          <div class="corner-flower bottom-left">
+            <svg viewBox="0 0 100 100"><path d="M50 10 Q30 30 10 50 Q30 70 50 90 Q70 70 90 50 Q70 30 50 10z" fill="#8b0000" opacity="0.3"/><circle cx="50" cy="50" r="20" fill="#d4af37" opacity="0.6"/><circle cx="50" cy="50" r="10" fill="#8b0000"/></svg>
+          </div>
+          <div class="corner-flower bottom-right">
+            <svg viewBox="0 0 100 100"><path d="M50 10 Q30 30 10 50 Q30 70 50 90 Q70 70 90 50 Q70 30 50 10z" fill="#8b0000" opacity="0.3"/><circle cx="50" cy="50" r="20" fill="#d4af37" opacity="0.6"/><circle cx="50" cy="50" r="10" fill="#8b0000"/></svg>
+          </div>
+          
+          <div class="content-wrapper">
+            <div class="bismillah">بسم اللہ الرحمٰن الرحیم</div>
+            <div class="royal-divider"></div>
+            <div class="intro-text">ہم اپنے پیارے بیٹے</div>
+            <div class="groom-name-highlight">وقاص بلال</div>
+            <div class="intro-text">کی شادی کے موقع پر</div>
+            <div class="royal-divider"></div>
+            <div class="blessing-text">بے شک جوڑے آسمانوں پر بنتے ہیں
+اے خدا! ان جوڑوں کو زمین پر
+شادمانی، ہنسی خوشیاں اور کامیابی عطا کر
+(آمین)</div>
+            <div class="intro-text" style="margin-top: 1.5rem; font-style: italic; opacity: 0.9;">آپ کو دل کی گہرائیوں سے خوش آمدید کہتے ہیں</div>
+          </div>
+        </div>
+        <div class="page-surface page-back"></div>
+      </div>
+
+      <!-- Page 2: Sehra Bandi -->
+      <div class="page" data-page="1">
+        <div class="page-surface page-front">
+          <div class="ornate-border"></div>
+          <div class="corner-flower top-left">
+            <svg viewBox="0 0 100 100"><path d="M50 10 Q30 30 10 50 Q30 70 50 90 Q70 70 90 50 Q70 30 50 10z" fill="#8b0000" opacity="0.3"/><circle cx="50" cy="50" r="20" fill="#d4af37" opacity="0.6"/></svg>
+          </div>
+          <div class="corner-flower top-right">
+            <svg viewBox="0 0 100 100"><path d="M50 10 Q30 30 10 50 Q30 70 50 90 Q70 70 90 50 Q70 30 50 10z" fill="#8b0000" opacity="0.3"/><circle cx="50" cy="50" r="20" fill="#d4af37" opacity="0.6"/></svg>
+          </div>
+          <div class="corner-flower bottom-left">
+            <svg viewBox="0 0 100 100"><path d="M50 10 Q30 30 10 50 Q30 70 50 90 Q70 70 90 50 Q70 30 50 10z" fill="#8b0000" opacity="0.3"/><circle cx="50" cy="50" r="20" fill="#d4af37" opacity="0.6"/></svg>
+          </div>
+          <div class="corner-flower bottom-right">
+            <svg viewBox="0 0 100 100"><path d="M50 10 Q30 30 10 50 Q30 70 50 90 Q70 70 90 50 Q70 30 50 10z" fill="#8b0000" opacity="0.3"/><circle cx="50" cy="50" r="20" fill="#d4af37" opacity="0.6"/></svg>
+          </div>
+          
+          <div class="content-wrapper">
+            <div class="page-title">سہرا بندی</div>
+            <div class="royal-divider"></div>
+            <div class="event-card">
+              <div class="intro-text" style="font-size: clamp(1.4rem, 2.8vw, 1.9rem); margin-bottom: 1rem;">ان شاء اللہ</div>
+              <div class="event-date">مورخہ 14 نومبر 2025<br>بروز جمعہ المبارک</div>
+              <div class="event-time">وقت: شام 5 بجے</div>
+            </div>
+            <div class="royal-divider"></div>
+            <div class="blessing-text">سب پروگرام میں تشریف لا کر
+شادمانی کے حسین لمحات کو
+درخشاں بنائیں</div>
+          </div>
+        </div>
+        <div class="page-surface page-back"></div>
+      </div>
+
+      <!-- Page 3: Baraat -->
+      <div class="page" data-page="2">
+        <div class="page-surface page-front">
+          <div class="ornate-border"></div>
+          <div class="corner-flower top-left">
+            <svg viewBox="0 0 100 100"><path d="M50 10 Q30 30 10 50 Q30 70 50 90 Q70 70 90 50 Q70 30 50 10z" fill="#8b0000" opacity="0.3"/><circle cx="50" cy="50" r="20" fill="#d4af37" opacity="0.6"/></svg>
+          </div>
+          <div class="corner-flower top-right">
+            <svg viewBox="0 0 100 100"><path d="M50 10 Q30 30 10 50 Q30 70 50 90 Q70 70 90 50 Q70 30 50 10z" fill="#8b0000" opacity="0.3"/><circle cx="50" cy="50" r="20" fill="#d4af37" opacity="0.6"/></svg>
+          </div>
+          <div class="corner-flower bottom-left">
+            <svg viewBox="0 0 100 100"><path d="M50 10 Q30 30 10 50 Q30 70 50 90 Q70 70 90 50 Q70 30 50 10z" fill="#8b0000" opacity="0.3"/><circle cx="50" cy="50" r="20" fill="#d4af37" opacity="0.6"/></svg>
+          </div>
+          <div class="corner-flower bottom-right">
+            <svg viewBox="0 0 100 100"><path d="M50 10 Q30 30 10 50 Q30 70 50 90 Q70 70 90 50 Q70 30 50 10z" fill="#8b0000" opacity="0.3"/><circle cx="50" cy="50" r="20" fill="#d4af37" opacity="0.6"/></svg>
+          </div>
+          
+          <div class="content-wrapper">
+            <div class="page-title">روایتی بارات</div>
+            <div class="royal-divider"></div>
+            <div class="event-card">
+              <div class="event-date">مورخہ 15 نومبر 2025<br>بروز ہفتہ</div>
+              <div class="event-time">وقت: صبح 8 بجے</div>
+              <div class="event-location">مقام:<br>چک نمبر 35/M دینا پور</div>
+            </div>
+            <div class="royal-divider"></div>
+            <div class="blessing-text" style="font-size: clamp(1.1rem, 2.2vw, 1.5rem);">متمنی شرکت:<br>بیگم و چوہدری محمد بلال<br>بیگم و چوہدری محمد سلیم کبوہ</div>
+          </div>
+        </div>
+        <div class="page-surface page-back"></div>
+      </div>
+
+      <!-- Page 4: Walima -->
+      <div class="page" data-page="3">
+        <div class="page-surface page-front">
+          <div class="ornate-border"></div>
+          <div class="corner-flower top-left">
+            <svg viewBox="0 0 100 100"><path d="M50 10 Q30 30 10 50 Q30 70 50 90 Q70 70 90 50 Q70 30 50 10z" fill="#8b0000" opacity="0.3"/><circle cx="50" cy="50" r="20" fill="#d4af37" opacity="0.6"/></svg>
+          </div>
+          <div class="corner-flower top-right">
+            <svg viewBox="0 0 100 100"><path d="M50 10 Q30 30 10 50 Q30 70 50 90 Q70 70 90 50 Q70 30 50 10z" fill="#8b0000" opacity="0.3"/><circle cx="50" cy="50" r="20" fill="#d4af37" opacity="0.6"/></svg>
+          </div>
+          <div class="corner-flower bottom-left">
+            <svg viewBox="0 0 100 100"><path d="M50 10 Q30 30 10 50 Q30 70 50 90 Q70 70 90 50 Q70 30 50 10z" fill="#8b0000" opacity="0.3"/><circle cx="50" cy="50" r="20" fill="#d4af37" opacity="0.6"/></svg>
+          </div>
+          <div class="corner-flower bottom-right">
+            <svg viewBox="0 0 100 100"><path d="M50 10 Q30 30 10 50 Q30 70 50 90 Q70 70 90 50 Q70 30 50 10z" fill="#8b0000" opacity="0.3"/><circle cx="50" cy="50" r="20" fill="#d4af37" opacity="0.6"/></svg>
+          </div>
+          
+          <div class="content-wrapper">
+            <div class="page-title">دعوتِ ولیمہ</div>
+            <div class="royal-divider"></div>
+            <div class="event-card">
+              <div class="event-date">مورخہ 16 نومبر 2025<br>بروز اتوار</div>
+              <div class="event-time">وقت: دوپہر 12 تا 2 بجے</div>
+              <div class="event-location" style="margin-top: 1.5rem;">شرکت کی گزارش ہے</div>
+            </div>
+            <div class="royal-divider"></div>
+            <div class="blessing-text" style="font-size: clamp(1.1rem, 2.2vw, 1.5rem);">میزبان:<br>وقاص بلال و برادران<br><br>رابطہ:<br>0300-6841202<br>0300-4983566</div>
+            <div class="intro-text" style="margin-top: 1.5rem; font-size: clamp(1rem, 2vw, 1.3rem); font-style: italic; opacity: 0.8;">آپ کی موجودگی ہماری خوشیوں میں اضافہ کرے گی</div>
+          </div>
+        </div>
+        <div class="page-surface page-back"></div>
+      </div>
+    </div>
+
+    <!-- Navigation Arrows -->
+    <div class="nav-arrow arrow-prev" id="prevArrow">◀</div>
+    <div class="nav-arrow arrow-next" id="nextArrow">▶</div>
+
+    <!-- Page Indicators -->
+    <div class="page-dots" id="pageDots"></div>
+
+    <!-- WhatsApp Share Button -->
+    <div class="whatsapp-btn" id="whatsappBtn" title="شیئر کریں">
+      <svg viewBox="0 0 32 32"><path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825 0.737 5.607 2.137 8.048l-2.137 7.952 7.933-2.127c2.42 1.37 5.173 2.127 8.067 2.127 8.837 0 16-7.163 16-16s-7.163-16-16-16zM16 29.467c-2.482 0-4.908-0.646-7.07-1.87l-0.507-0.292-4.713 1.262 1.262-4.669-0.292-0.508c-1.207-2.100-1.847-4.507-1.847-6.985 0-7.51 6.11-13.62 13.62-13.62s13.62 6.11 13.62 13.62-6.11 13.62-13.62 13.62zM21.305 19.26c-0.346-0.174-2.049-1.007-2.366-1.123-0.316-0.117-0.547-0.174-0.776 0.174s-0.893 1.123-1.094 1.347c-0.201 0.23-0.402 0.26-0.748 0.086-0.346-0.174-1.461-0.539-2.785-1.722-1.031-0.922-1.727-2.061-1.929-2.407-0.201-0.346-0.021-0.533 0.152-0.705 0.156-0.155 0.346-0.402 0.518-0.603 0.174-0.201 0.231-0.346 0.346-0.576 0.117-0.23 0.058-0.431-0.028-0.603-0.087-0.174-0.776-1.87-1.063-2.565-0.28-0.672-0.56-0.58-0.776-0.591-0.201-0.010-0.431-0.012-0.661-0.012s-0.603 0.086-0.92 0.431c-0.316 0.346-1.206 1.179-1.206 2.873s1.235 3.333 1.406 3.561c0.174 0.23 2.384 3.797 5.846 5.182 3.179 1.273 3.463 1.019 4.088 0.955 0.603-0.061 2.049-0.837 2.337-1.645 0.288-0.807 0.288-1.501 0.201-1.645-0.086-0.144-0.316-0.23-0.661-0.402z"/></svg>
+    </div>
+
+    <!-- Auto-flip Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <script>
+    // ==================== CONFIGURATION ====================
+    const TOTAL_PAGES = 4;
+    const AUTO_FLIP_DELAY = 7000; // 7 seconds
+    
+    // ==================== STATE ====================
+    let currentPage = 0;
+    let autoFlipTimer = null;
+    let progressInterval = null;
+    let progressValue = 0;
+
+    // ==================== DOM ELEMENTS ====================
+    const pages = document.querySelectorAll('.page');
+    const prevArrow = document.getElementById('prevArrow');
+    const nextArrow = document.getElementById('nextArrow');
+    const pageDots = document.getElementById('pageDots');
+    const whatsappBtn = document.getElementById('whatsappBtn');
+    const progressBar = document.getElementById('progressBar');
+
+    // ==================== PAGE FLIP SOUND ====================
+    function playPageFlipSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        // Create realistic paper flip sound
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+        
+        gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        
+        oscillator.start(audioCtx.currentTime);
+        oscillator.stop(audioCtx.currentTime + 0.2);
+      } catch (e) {
+        // Audio not supported, fail silently
+      }
+    }
+
+    // ==================== INITIALIZE PAGE DOTS ====================
+    function initPageDots() {
+      for (let i = 0; i < TOTAL_PAGES; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        if (i === 0) dot.classList.add('active');
+        dot.addEventListener('click', () => goToPage(i));
+        pageDots.appendChild(dot);
+      }
+    }
+
+    // ==================== UPDATE UI ====================
+    function updateUI() {
+      // Update navigation arrows
+      prevArrow.classList.toggle('disabled', currentPage === 0);
+      nextArrow.classList.toggle('disabled', currentPage === TOTAL_PAGES - 1);
+
+      // Update page dots
+      const dots = pageDots.querySelectorAll('.dot');
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentPage);
+      });
+
+      // Update page flip states
+      pages.forEach((page, index) => {
+        if (index < currentPage) {
+          page.classList.add('flipped');
+          page.style.zIndex = index;
+        } else {
+          page.classList.remove('flipped');
+          page.style.zIndex = TOTAL_PAGES - index;
+        }
+      });
+    }
+
+    // ==================== NAVIGATION ====================
+    function goToPage(pageNum) {
+      if (pageNum < 0 || pageNum >= TOTAL_PAGES || pageNum === currentPage) return;
+      
+      currentPage = pageNum;
+      playPageFlipSound();
+      updateUI();
+      resetAutoFlip();
+    }
+
+    function nextPage() {
+      if (currentPage < TOTAL_PAGES - 1) {
+        goToPage(currentPage + 1);
+      }
+    }
+
+    function prevPage() {
+      if (currentPage > 0) {
+        goToPage(currentPage - 1);
+      }
+    }
+
+    // ==================== AUTO FLIP ====================
+    function startAutoFlip() {
+      stopAutoFlip();
+      
+      progressValue = 0;
+      progressBar.style.width = '0%';
+      
+      // Progress bar animation
+      progressInterval = setInterval(() => {
+        progressValue += 100 / (AUTO_FLIP_DELAY / 50);
+        progressBar.style.width = Math.min(progressValue, 100) + '%';
+      }, 50);
+      
+      // Auto flip timer
+      autoFlipTimer = setTimeout(() => {
+        if (currentPage < TOTAL_PAGES - 1) {
+          nextPage();
+        } else {
+          goToPage(0); // Loop back to start
+        }
+      }, AUTO_FLIP_DELAY);
+    }
+
+    function stopAutoFlip() {
+      if (autoFlipTimer) {
+        clearTimeout(autoFlipTimer);
+        autoFlipTimer = null;
+      }
+      if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+      }
+    }
+
+    function resetAutoFlip() {
+      stopAutoFlip();
+      startAutoFlip();
+    }
+
+    // ==================== WHATSAPP SHARE ====================
+    function shareOnWhatsApp() {
+      const message = encodeURIComponent(
+        `🎊 آپ کو وقاص بلال کی شادی میں مدعو کیا جاتا ہے 🎊\n\n` +
+        `📅 سہرا بندی: 14 نومبر 2025 (جمعہ) - 5 بجے شام\n` +
+        `📅 بارات: 15 نومبر 2025 (ہفتہ) - 8 بجے صبح\n` +
+        `📅 ولیمہ: 16 نومبر 2025 (اتوار) - 12 تا 2 بجے\n\n` +
+        `📍 مقام: چک نمبر 35/M دینا پور\n` +
+        `📞 رابطہ: 0300-6841202, 0300-4983566\n\n` +
+        `مکمل دعوت نامہ دیکھنے کے لیے: ${window.location.href}`
+      );
+      window.open(`https://wa.me/?text=${message}`, '_blank');
+    }
+
+    // ==================== EVENT LISTENERS ====================
+    prevArrow.addEventListener('click', prevPage);
+    nextArrow.addEventListener('click', nextPage);
+    whatsappBtn.addEventListener('click', shareOnWhatsApp);
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        if (e.key === 'ArrowRight') {
+          prevPage(); // RTL: right goes back
+        } else {
+          nextPage(); // RTL: left goes forward
+        }
+      } else if (e.key === 'Home') {
+        goToPage(0);
+      } else if (e.key === 'End') {
+        goToPage(TOTAL_PAGES - 1);
+      }
+    });
+
+    // Touch swipe support
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      stopAutoFlip();
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+      startAutoFlip();
+    }, { passive: true });
+
+    function handleSwipe() {
+      const swipeThreshold = 50;
+      const diff = touchStartX - touchEndX;
+      
+      if (Math.abs(diff) > swipeThreshold) {
+        if (diff > 0) {
+          nextPage(); // Swipe left = next
+        } else {
+          prevPage(); // Swipe right = previous
+        }
+      }
+    }
+
+    // Pause auto-flip when user interacts
+    document.addEventListener('mousedown', stopAutoFlip);
+    document.addEventListener('mouseup', () => {
+      setTimeout(startAutoFlip, 1000);
+    });
+
+    // Pause auto-flip when tab is not visible
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        stopAutoFlip();
+      } else {
+        startAutoFlip();
+      }
+    });
+
+  
+    initPageDots();
+    updateUI();
+    startAutoFlip();
+  </script>
+</body>
+</html>
